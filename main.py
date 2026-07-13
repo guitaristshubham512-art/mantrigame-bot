@@ -1,15 +1,14 @@
-# main.py – Combined all bots for Render (with Session String)
+# main.py – Combined bot + dummy HTTP server for Render
 import asyncio
 import random
 from datetime import datetime
 from telethon import TelegramClient, events
-from telethon.sessions import StringSession  # ✅ CHANGE 1: StringSession import
+from telethon.sessions import StringSession
+from aiohttp import web
 from config import *
 
 # ----- CONFIG -----
 SOURCE_CHANNEL = '@MELINDA_MANTRIMALL'  # 🔁 CHANGE IF NEEDED
-
-# ✅ CHANGE 2: StringSession use karo
 client = TelegramClient(StringSession(SESSION_STRING), API_ID, API_HASH)
 
 # ----- REPOST BOT -----
@@ -49,43 +48,54 @@ async def hourly_post():
         await client.send_message(YOUR_CHANNEL, final_msg)
         print(f"✅ Hourly post sent at {time_now}")
 
-# ----- SCRAPE & DM (Optional - 1 baar chalega) -----
+# ----- SCRAPE & DM (Optional) -----
 async def scrape_and_dm():
     try:
-        target = await client.get_entity('@JASMINE_TCLOTTERY')  # 🔁 CHANGE
+        target = await client.get_entity('@JASMINE_TCLOTTERY')
         print("📋 Scraping members...")
         users = []
         async for user in client.iter_participants(target, limit=50):
             if user.username:
                 users.append(f"@{user.username}")
-        
         print(f"✅ {len(users)} members found. Sending DMs...")
         msg = f"🔥 Join {YOUR_CHANNEL} for daily 5K+ profit!\nRegister: {REFERRAL_LINK}"
-        
-        for username in users[:20]:  # Sirf 20 DMs (safe)
+        for username in users[:20]:
             try:
                 entity = await client.get_entity(username)
                 await client.send_message(entity, msg)
                 print(f"✅ DM sent to {username}")
                 await asyncio.sleep(10)
-            except Exception as e:
+            except Exception:
                 print(f"❌ Failed: {username}")
     except Exception as e:
         print(f"⚠️ Scrape/DM skipped: {e}")
 
-# ----- MAIN -----
-async def main():
+# ----- BOT MAIN -----
+async def bot_main():
     await client.start()
     print("🔥 Mantri Bot started on Render!")
-    
-    # Optional: Ek baar scrape+DM karo (hatana hai toh comment kar do)
     asyncio.create_task(scrape_and_dm())
-    
-    # Hourly post background mein
     asyncio.create_task(hourly_post())
-    
-    # Repost bot (main loop)
     await client.run_until_disconnected()
 
+# ----- DUMMY HTTP SERVER (for Render port scan) -----
+async def handle_health(request):
+    return web.Response(text="Bot is running!")
+
+async def start_http_server():
+    app = web.Application()
+    app.router.add_get('/', handle_health)
+    runner = web.AppRunner(app)
+    await runner.setup()
+    site = web.TCPSite(runner, '0.0.0.0', 10000)
+    await site.start()
+    print("✅ Health check server on port 10000")
+    await asyncio.Event().wait()  # keep running
+
+# ----- FINAL RUNNER -----
 if __name__ == '__main__':
-    asyncio.run(main())
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
+    bot_task = loop.create_task(bot_main())
+    http_task = loop.create_task(start_http_server())
+    loop.run_until_complete(asyncio.gather(bot_task, http_task))
