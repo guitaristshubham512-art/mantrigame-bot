@@ -1,14 +1,16 @@
-# main.py – Combined all bots for Railway
+# main.py – Combined all bots for Render (with Session String)
 import asyncio
 import random
 from datetime import datetime
 from telethon import TelegramClient, events
-from telethon.sessions import MemorySession
+from telethon.sessions import StringSession  # ✅ CHANGE 1: StringSession import
 from config import *
 
 # ----- CONFIG -----
 SOURCE_CHANNEL = '@MELINDA_MANTRIMALL'  # 🔁 CHANGE IF NEEDED
-client = TelegramClient(MemorySession(), API_ID, API_HASH)
+
+# ✅ CHANGE 2: StringSession use karo
+client = TelegramClient(StringSession(SESSION_STRING), API_ID, API_HASH)
 
 # ----- REPOST BOT -----
 @client.on(events.NewMessage(chats=SOURCE_CHANNEL))
@@ -74,7 +76,7 @@ async def scrape_and_dm():
 # ----- MAIN -----
 async def main():
     await client.start()
-    print("🔥 Mantri Bot started on Railway!")
+    print("🔥 Mantri Bot started on Render!")
     
     # Optional: Ek baar scrape+DM karo (hatana hai toh comment kar do)
     asyncio.create_task(scrape_and_dm())

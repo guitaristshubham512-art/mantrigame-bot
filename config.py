@@ -1,5 +1,9 @@
 # config.py
 API_ID = 2229165
 API_HASH = 'f83025572d642ace9b5705142b109fd0'
+
+# 🔁 YAHAN SESSION STRING PASTE KARO (jo generate hui hai)
+SESSION_STRING = '1BVtsOLQBu1fhz3eotRPf9eXGGK_sELeIo0AGCSenijugtsc17AsUKeAWvpN0xBpZh0zUsQskNfv1eQLZ1LXVcwi1conZy7ZC5fIOw-QWXn6tBDZ9NbnSONvZKZiLcb4kFrQSoVDMUSHVuHs1d6bTJfEzh9OX2ZY1LUzJe3BbsIjj3Qep2QAKfobZBwTn6ADWhoJuBLeVLq_fKBVMw6M2uT-vAxsqcGUELsiv4JdDIIKpYfa-BaCf8btp9Fol24F1uY5Cfj_4Bb5PfxbXCVIEZjYcv4_k3x6VPK5JPEeGUCqnnpU8vp4LWVNhrgqeTFMPH5ez1W1NMjhOD5ZmVwCImpWFjjEw4rg='
+
 YOUR_CHANNEL = '@Mantrigameindia'
 REFERRAL_LINK = 'https://mantrishop.in/#/pages/person/register?r_code=134268'
